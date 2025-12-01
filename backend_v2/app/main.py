@@ -265,7 +265,15 @@ async def clear_session(session_id: str):
 
 @app.get("/")
 async def root():
-    """Root endpoint with API information"""
+    """Serve frontend or API info"""
+    static_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), "static")
+    index_path = os.path.join(static_dir, "index.html")
+    
+    # Serve frontend if it exists
+    if os.path.exists(index_path):
+        return FileResponse(index_path)
+    
+    # Otherwise return API info
     return {
         "message": "Travel Concierge API",
         "version": settings.VERSION,
