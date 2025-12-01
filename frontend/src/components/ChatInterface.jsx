@@ -1,7 +1,8 @@
 import { useState, useRef, useEffect } from 'react'
 import axios from 'axios'
 
-const API_URL = 'http://127.0.0.1:8001'
+// Use relative URL for production (same origin as frontend)
+const API_URL = window.location.origin
 
 export default function ChatInterface({ sessionId, setSessionId }) {
   const [messages, setMessages] = useState([])

@@ -4,10 +4,13 @@ Stateless, no database, real-time information
 """
 from fastapi import FastAPI, UploadFile, File, HTTPException, Form
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
 from typing import Optional
 import uuid
 import traceback
 import logging
+import os
 
 from app.config import get_settings
 
@@ -34,6 +37,12 @@ app = FastAPI(
     description="Real-time travel planning with multi-agent AI"
 )
 
+# Mount static files for frontend (if exists)
+static_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), "static")
+if os.path.exists(static_dir):
+    app.mount("/assets", StaticFiles(directory=os.path.join(static_dir, "assets")), name="assets")
+    logger.info(f"Static files mounted from {static_dir}")
+
 # CORS middleware - allow all origins (no authentication)
 app.add_middleware(
     CORSMiddleware,
@@ -44,9 +53,9 @@ app.add_middleware(
 )
 
 
-@app.get("/")
-async def root():
-    """Root endpoint with API information"""
+@app.get("/api")
+async def api_info():
+    """API information endpoint"""
     return {
         "message": "✈️ Travel Concierge API",
         "version": settings.VERSION,
