@@ -1,26 +1,16 @@
-# Lightweight Travel Concierge - Minimal Dependencies
-# No databases, no authentication, no ORM
+# Travel Concierge AI - Production Dependencies
 
 # Web Framework
 fastapi==0.104.1
 uvicorn[standard]==0.24.0
 python-multipart==0.0.6
 
-# LLM & RAG
-chromadb==0.4.18
-sentence-transformers==2.2.2
-langchain==0.1.0
-langchain-community==0.0.10
+# HTTP Client
+httpx==0.25.2
 
-# Document Processing
+# Document Processing (lightweight)
 PyPDF2==3.0.1
 python-docx==1.1.0
-beautifulsoup4==4.12.2
-
-# Web Search & APIs
-duckduckgo-search==4.1.1
-httpx==0.25.2
-aiohttp==3.9.1
 
 # Utilities
 pydantic==2.5.0
