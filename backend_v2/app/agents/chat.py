@@ -7,7 +7,6 @@ import uuid
 
 from app.llm import llm
 from app.rag_minimal import rag  # Using minimal RAG (no ChromaDB)
-from app.web_search import web_search
 from app.llm_search import llm_search  # LLM-based search for real place names
 from app.schemas import ChatRequest, ChatResponse
 
