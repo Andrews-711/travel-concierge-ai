@@ -40,7 +40,10 @@ app = FastAPI(
 # Mount static files for frontend (if exists)
 static_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), "static")
 if os.path.exists(static_dir):
-    app.mount("/assets", StaticFiles(directory=os.path.join(static_dir, "assets")), name="assets")
+    # Mount assets directory for JS/CSS files
+    assets_dir = os.path.join(static_dir, "assets")
+    if os.path.exists(assets_dir):
+        app.mount("/assets", StaticFiles(directory=assets_dir), name="assets")
     logger.info(f"Static files mounted from {static_dir}")
 
 # CORS middleware - allow all origins (no authentication)
@@ -62,6 +65,15 @@ async def api_info():
         "status": "running",
         "llm": "Gemini" if llm.use_gemini else "Ollama",
         "docs": "/docs"
+    }
+
+@app.get("/api/test")
+async def api_test():
+    """Test endpoint to verify API connectivity"""
+    return {
+        "status": "ok",
+        "message": "API is working!",
+        "timestamp": "2025-12-02T00:00:00Z"
     }
 
 
@@ -300,14 +312,11 @@ async def serve_frontend(full_path: str):
         if os.path.exists(file_path) and os.path.isfile(file_path):
             return FileResponse(file_path)
         
-        # Fallback to index.html for client-side routing
-        index_path = os.path.join(static_dir, "index.html")
-        if os.path.exists(index_path):
-            return FileResponse(index_path)
+        # For root or any path without extension, serve index.html
+        if not "." in full_path or full_path == "":
+            index_path = os.path.join(static_dir, "index.html")
+            if os.path.exists(index_path):
+                return FileResponse(index_path)
     
-    # If no static files, return API info
-    return {
-        "message": "Travel Concierge API",
-        "note": "Frontend not available. Use /docs for API documentation.",
-        "docs": "/docs"
-    }
+    # If no static files, return 404
+    raise HTTPException(status_code=404, detail="Not found")
