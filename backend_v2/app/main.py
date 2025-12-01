@@ -279,3 +279,27 @@ async def root():
             "clear_session": "DELETE /session/{session_id}"
         }
     }
+
+# Serve frontend static files
+@app.get("/{full_path:path}")
+async def serve_frontend(full_path: str):
+    """Serve React frontend for all non-API routes"""
+    static_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), "static")
+    
+    if os.path.exists(static_dir):
+        # Try to serve the requested file
+        file_path = os.path.join(static_dir, full_path)
+        if os.path.exists(file_path) and os.path.isfile(file_path):
+            return FileResponse(file_path)
+        
+        # Fallback to index.html for client-side routing
+        index_path = os.path.join(static_dir, "index.html")
+        if os.path.exists(index_path):
+            return FileResponse(index_path)
+    
+    # If no static files, return API info
+    return {
+        "message": "Travel Concierge API",
+        "note": "Frontend not available. Use /docs for API documentation.",
+        "docs": "/docs"
+    }
